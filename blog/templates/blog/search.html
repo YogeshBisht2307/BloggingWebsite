@@ -1,0 +1,101 @@
+{% extends 'blog/layout.html' %}
+
+{% load blog_tags %}
+{% SEO as config %}
+{% web_detail as detail %}
+{% block keyword  %} {{config.keyword}} {% endblock  %}
+{% block title %} {{search_query}} : Web Development Query | KodeWeich Kaksha{% endblock %}
+{% block body %}
+
+<section id="jumbotron"
+    style="background-image:linear-gradient(rgba(23, 26, 24, 0.8),rgba(21, 19, 21, 0.8)),url('{{detail.sub_category_image.url}}'); background-repeat: no-repeat;background-size:cover;">
+    <div class="text-white jumbotron mb-0 jumbotron-fluid bg-transparent">
+        <div class="container">
+            <h1 class="display-5">Showing Result For :- {{search_query}}</h1>
+            <hr class="my-2">
+            {% if blogs|length < 1 %} <p>No search result found ! search for some other query</p>
+                {% else %}
+                <p>Following are most appropriate search result for the query.</p>
+                {% endif %}
+        </div>
+    </div>
+</section>
+
+<section id="blogs">
+    <div class="container pt-5 mx-auto">
+        <div class="row row-cols-1 row-cols-md-2">
+            
+            <div class="col-lg-8 col-md-8 col-sm-12">
+                {% if blogs|length < 1 %} 
+                <div class="container">
+                    <h2>It looks like there aren't many great matches for your search</h2>
+                    <p>Tip :- Try using words that might appear on the page that you’re looking for. For example,
+                        'cake recipes' instead of 'how to make a cake'.</p>
+                </div>
+                {% else %}
+                <div class="contianer">
+                    <div class="card-deck">
+                        {% for blog in blogs|slice:":8" %}
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="card mb-3">
+                                <img src="https://picsum.photos/id/{{blog.id}}/100" class="card-img-top" alt="..."
+                                    height="200px">
+                                <div class="card-body mb-3">
+                                    <h5 class="card-title">{{blog.title|slice:":25"}}...</h5>
+                                    <p class="card-text">{{blog.description|slice:":100"|safe}}...</p>
+                                    <p class="card-text"><small class="text-muted">{{blog.date}}</small></p>
+                                    <div class="links text-right">
+                                        <a href="/blog/{{blog.permalink}}" class="btn btn-info">See More</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+        {% endif %}
+            </div>
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="container mb-5 mx-auto">
+                <div class="card border-0">
+                    <div class="card-header text-center bg-info">
+                        Featured Post
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% feature_post as posts %}
+                        {% for post in posts %}
+                        <a href="/blog/{{post.permalink}} " class="text-decoration-none text-success"><li class=" list-group-item">{{post.title}}</li></a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <!-- blogsearch -->
+            <div class="container mb-5 ">
+                <h5 class="mb-3">Search Blogs</h5>
+                <form class="form-inline my-2 my-lg-0" action="/search_blog/" method="GET">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search"
+                        aria-label="Search">
+                    <button class="btn btn-dark my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+            <!-- subcategroy -->
+            <div class="container  mb-5 mx-auto">
+                <div class="card border-0 ">
+                    <div class="card-header bg-info text-center">
+                        Category
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for category in categories|slice:":4" %}
+                        <a href="/blogs/{{category.slug}}" class="text-decoration-none text-success">
+                            <li class="list-group-item">{{category.title}}</li>
+                        </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+{% endblock %}

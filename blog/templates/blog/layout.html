@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+{% load blog_tags %}
+{% web_detail as detail %}
+<head>
+    {% SEO as config %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="{{config.robot_tag}}">
+    
+    <meta name="googlebot" content="{{config.google_bot}}">
+    <meta name="description"
+        content="{{config.description}}">
+    <meta name="keywords" content="{% block keyword %} {% endblock %}">
+    <meta name="author" content="{{config.web_author}}">
+    <title>{% block title%} {% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'blog/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+    <script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=601e4584502e4d0011f5f232&product=inline-share-buttons" async="async"></script>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-info navbar-dark">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+                aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">{{detail.website_name}}</a>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mx-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'Home' %}">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button"
+                            data-toggle="dropdown" aria-expanded="false">
+                            Category
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                            {% category as result %}
+                            {% for category in result %}
+                            <li><a class="dropdown-item" href="/blogs/{{category.slug}}">{{category.title}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Contact' %}">Contact</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0" action="/search_blog/" method="GET">
+                    <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-dark my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+   {% block body %}
+
+   {% endblock %}
+    <footer class="bg-info">
+        <div class="container mx-auto text-center">
+            <div class="card-group pt-5 bg-transparent ">
+                <div class="card bg-transparent border-0">
+                    <div class="card-header border-0 bg-transparent">
+                       <h4 class="text-white text-uppercase">Categories</h4>
+                    </div>
+                    <ul class="list-group  list-group-flush">
+                        {% category as result %}
+                        {% for cat in result|slice:":4" %}
+                        <a href="/blogs/{{category.slug}}" class="text-decoration-none text-white" ><li class="list-group-item border-0 bg-transparent">{{cat.title}}</li></a>
+                         {% endfor %}
+                    </ul>
+                </div>
+                <div class="card bg-transparent border-0">
+                    <div class="card-header border-0 bg-transparent">
+                        <h4 class="text-white text-uppercase">Feature POST</h4>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% feature_post as posts %}
+                        {% for post in posts %}
+                        <a href="/blog/{{post.permalink}} " class="text-decoration-none text-white"><li class="list-group-item border-0 bg-transparent">{{post.title|slice:":25"}}...</li></a>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card bg-transparent border-0">
+                    <div class="card-header border-0 bg-transparent">
+                        <h4 class="text-white text-uppercase">Social Media</h4>
+                    </div>
+                    <ul class="list-group  list-group-flush">
+                        <a href="{{detail.facebook_link}}"><li class="list-group-item border-0 bg-transparent"><i class="fab fa-facebook text-white"> Facebook</i></li></a>
+                        <a href="{{detail.instagram_link}}"><li class="list-group-item border-0 bg-transparent"><i class="fab fa-instagram text-white" aria-hidden="true"> Instagram</i></li></a>
+                        <a href="{{detail.telegram_link}}"><li class="list-group-item border-0 bg-transparent"><i class="fab  fa-telegram text-white" aria-hidden="true"> Telegram</i></li></a>
+                        <a href="{{detail.twitter_link}}"><li class="list-group-item border-0 bg-transparent"><i class="fab  fa-telegram text-white" aria-hidden="true"> Twitter</i></li></a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- boostrap javascript cdn -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src= "{% static 'blog/js/main.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

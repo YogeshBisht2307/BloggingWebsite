@@ -1,0 +1,114 @@
+{% extends 'blog/layout.html' %}
+
+{% load blog_tags %}
+{% SEO as config %}
+{% web_detail as detail %}
+{% block keyword  %} {{config.keyword}} {% endblock  %}
+{% block title %} Web Development Tutorials : web designing blogs | KodeWeich Kaksha{% endblock %}
+{% block body %}
+
+<!-- html code for jumbotron -->
+<section id="jumbotron" style="background-image:linear-gradient(rgba(23, 26, 24, 0.8),rgba(21, 19, 21, 0.8)),url('{{detail.hero_image.url}}'); background-repeat:no-repeat; background-size:cover;">
+    <div class="text-white jumbotron mb-0 jumbotron-fluid bg-transparent">
+        <div class="container">
+            <h1 class="display-5">{{detail.website_name}}</h1>
+            <p class="lead">{{config.tagline}}</p>
+            <hr class="my-2">
+            <p>{{config.description}}.</p>
+            <p class="lead">
+                <a class="btn btn-info" href="#blogs" role="button">See More</a>
+            </p>
+        </div>
+    </div>
+</section>
+<section id="blogs">
+    <div class="container pt-5 mx-auto">
+        <div class="row row-cols-1 row-cols-md-2">
+            <div class="col-lg-8 col-md-8 col-ms-12">
+                <div class="contianer">
+                    {% for blog in blogs %}
+                    <div class="card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="{{blog.image.url}}"" alt="..." class="img-fluid">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h6 id="blog-subcat" class="text-danger ">{{blog.category.title}}</h6>
+                                    <a href="/blog/{{blog.permalink}}" class="text-decoration-none text-info"><h4 class="card-title">{{blog.title}}</h4></a>
+                                    <p class="card-text">{{blog.description|slice:":160"|safe}}...
+                                    </p>
+                                    <p class="card-text m-0 p-0"><small class="text-muted">{{blog.date}}</small>
+                                    </p>
+                                    <div class="links m-0 p-0 text-right">
+                                        <a href="/blog/{{blog.permalink}}" class="btn btn-info btn-sm">See More</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="container mb-5 mx-auto">
+                    <div class="card border-0">
+                        <div class="card-header text-center bg-info">
+                            Featured Post
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% feature_post as posts %}
+                            {% for post in posts %}
+                            <a href="/blog/{{post.permalink}} " class="text-decoration-none text-success"><li class="list-group-item">{{post.title}}</li></a>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <!-- blogsearch -->
+                <div class="container mb-5 ">
+                    <h5 class="mb-3">Search Blogs</h5>
+                    <form class="form-inline my-2 my-lg-0"  action="/search_blog/" method="GET">
+                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-dark my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+                <!-- subcategroy -->
+                <div class="container  mb-5 mx-auto">
+                    <div class="card border-0 ">
+                        <div class="card-header bg-info text-center">
+                            Recent Post
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for blog in recent_post %}
+                            <a href="/blog/{{blog.permalink}}" class="text-decoration-none text-success"><li class="list-group-item">{{blog.title}}</li></a>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- code for pagination -->
+        <div class="blog-pagination mb-5 mt-5 d-flex">
+            <div class="pagination align-self-center mx-auto">
+                <span class="step-links">
+                    {% if blogs.has_previous %}
+                        <a class="border p-3 badge text-white bg-danger" href="?page=1">First</a>
+                        <a class="border p-2" href="?page={{ blogs.previous_page_number }}">&laquo;</a>
+                    {% endif %}
+            
+                    <span class="current badge bg-info p-3 ">
+                        Page {{ blogs.number}} of {{ blogs.paginator.num_pages }}.
+                    </span>
+            
+                    {% if blogs.has_next %}
+                        <a class="border p-2" href="?page={{ blogs.next_page_number }}"> &raquo;</a>
+                        <a class="border p-3 text-white badge bg-danger" href="?page={{ blogs.paginator.num_pages }}">Last</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

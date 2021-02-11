@@ -1,0 +1,10 @@
+
+body a{
+	text-decoration: none;
+
+}
+#blog-detail .blog_detail{
+	border: 1px solid black;
+	padding:40px;
+	box-shadow: 2px 4px 82px -24px rgba(0,0,0,0.66);
+}

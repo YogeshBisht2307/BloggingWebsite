@@ -1,0 +1,198 @@
+{% extends 'blog/layout.html' %}
+{% load blog_tags %}
+{% block keyword  %} {% for tag in tags %} {{tag.title}}, {% endfor %} {% endblock  %}
+{% block title %} {{blog.title}} - Web Development Tutorial  | KodeWeich Kaksha{% endblock %}
+{% block body %}
+
+<section id="jumbotron"
+    style="background-image:linear-gradient(rgba(23, 26, 24, 0.8),rgba(21, 19, 21, 0.8)),url('{{blog.image.url}}'); background-repeat: no-repeat;background-size:cover;">
+    <div class="text-white mb-0 jumbotron jumbotron-fluid bg-transparent">
+        <div class="container">
+            <h1 class="display-5">{{blog.title}}</h1>
+            <hr class="my-2">
+            <p class="mt-2"><span class="m-2 badge bg-info text-white p-2">{{blog.date}}</span><span
+                    class="m-2 badge bg-info text-white p-2">{{blog.category.title}}</span><a href="#comments"><span
+                        class="m-2 badge bg-info text-white p-2">Leave A Comment</span></a>
+        </div>
+    </div>
+</section>
+{% for message in messages %}
+{%  if message %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show mt-0" role="alert">
+    <strong>Hey {{name}} ! </strong>{{message}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endif %}
+{% endfor %}
+<section id="blog-detail">
+    <div class="container pt-4">
+        <div class="row row-cols-1 row-cols-md-2">
+            <div class="col-lg-8 col-md-8 col-ms-12 mt-2 blog_detail">
+                <div class="contianer">
+                    {{blog.content|safe}}
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 mt-3 " id="blog-relate">
+                <div class="sidebar" style="position:sticky; -webkit-position:sticky; top: 10px;">
+                    <div class="container mb-5 mx-auto">
+                        <div class="card border text-center">
+                            <img class="img-responsive mx-auto border rounded-circle mb-2" height="100px" width="100"
+                                src="{{blog.author.image.url}}" alt="">
+                            <div class="text-center bg-info">
+                                <h6 class="text-center text-white mt-1 p-1">Author :-{{blog.author.name}}</h6>
+                            </div>
+                            <h6 class="mt-2">{{blog.author.designation}}</h6>
+                            <p class="p-2"> {{blog.author.description}}</p>
+                        </div>
+                    </div>
+                    <!-- blogsearch -->
+                    <div class="container mb-5 ">
+                        <h5 class="mb-3">Search Blogs</h5>
+                        <form class="form-inline my-2 my-lg-0" action="/search_blog/" method="GET">
+                            <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search"
+                                aria-label="Search">
+                            <button class="btn btn-dark my-2 my-sm-0" type="submit">Search</button>
+                        </form>
+                    </div>
+                    <!-- subcategroy -->
+                    <div class="container  mb-5 mx-auto">
+                        <div class="card border-0 ">
+                            <div class="card-header bg-info text-center">
+                                Tags
+                            </div>
+                            <p>
+                                {% for tag in tags %}
+                                <span class="badge text-white bg-dark p-2 m-1">{{tag.title}}</span>
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                    {% if related_blogs %}
+                    <div class="container  mb-5 mx-auto">
+                        <div class="card border-0 ">
+                            <div class="card-header bg-info text-center">
+                                Related Post
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                {% for blog in related_blogs %}
+                                <a href="/blog/{{blog.permalink}}" class="text-decoration-none text-success">
+                                    <li class="list-group-item">{{ blog.title }}</li>
+                                </a>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- html code for comment section  -->
+<section class="content-item">
+    <div class="mb-3 mt-5 sharethis-inline-share-buttons"></div>
+    <div class="container mx-auto mt-5 col-lg-5 col-md-5 col-sm-12 col-12 ">
+        <h4 class="pt-3">POST A COMMENT</h4>
+        <form action="/blog/{{blog.permalink}}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for=""></label>
+                <input type="name" class="form-control" name="name" id="" aria-describedby="nameHelpId"
+                    placeholder="Enter Name">
+            </div>
+            <input type="hidden" value="" name="parent_sno">
+            <div class="form-group">
+                <label for=""></label>
+                <input type="email" class="form-control" name="email" id="" aria-describedby="emailHelpId"
+                    placeholder="Enter Email">
+            </div>
+            <div class="form-group">
+                <label for=""></label>
+                <textarea class="form-control" name="comment" id="" rows="3" placeholder="Enter Your Comment"></textarea>
+            </div>
+            <div class="form-group pb-5 text-right">
+                <input type="submit" class="btn btn-info btn-block" value="POST COMMENT">
+            </div>
+        </form>
+    </div>
+</section>
+<section id="comments pb-5">
+    <div class="container mx-auto col-lg-7 col-md-7 col-sm-12 col-12">
+        <h3 class="pt-3 mb-5">Comments( {% total_no_of_comment blog %} )</h3>
+        {% if comments %}
+        {% for comment in comments %}
+        <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-1 col-1">
+                <img src="https://picsum.photos/id/20/850" class=" rounded-circle p-3 m-0 img-fluid">
+            </div>
+            <div class="col-lg-10 col-md-10 col-sm-11 col-11">
+                <span class="badge bg-dark text-white badge-sm p-2">{{comment.date}}</span>
+                <h6>{{comment.name}}</h6>
+                <p>{{comment.blog_comment}}</p>
+                <div id="reply-form" class="mx-0">
+                    <p><button class="btn btn-info mt-0 btn-sm mb-3" type="button" data-toggle="collapse"
+                        data-target="#collapseExample{{comment.id}}" aria-expanded="false" aria-controls="collapseExample">
+                        Reply
+                    </button>
+                    <button class="btn btn-info mt-0 btn-sm text-right mb-3" type="button" data-toggle="collapse"
+                        data-target="#collapseReply{{comment.id}}" aria-expanded="false" aria-controls="collapseExample">
+                        Hide/Show Reply
+                    </button>
+                    </p>
+                    <div class="collapse mb-2" id="collapseExample{{comment.id}}">
+                        <div class="card card-body">
+                            <form action="/blog/{{blog.permalink}}" method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for=""></label>
+                                    <input type="name" class="form-control form-control-sm" name="name" id="" aria-describedby="nameHelpId"
+                                        placeholder="Enter Name">
+                                </div>
+                                <input type="hidden" value="{{comment.id}}" name="parent_sno">
+                                <div class="form-group">
+                                    <label for=""></label>
+                                    <input type="email" class="form-control form-control-sm" name="email" id=""
+                                        aria-describedby="emailHelpId" placeholder="Enter Email">
+                                </div>
+                                <div class="form-group">
+                                    <label for=""></label>
+                                    <textarea class="form-control form-control-sm" name="comment" id="" rows="3"
+                                        placeholder="Enter Your Comment"></textarea>
+                                </div>
+                                <div class="form-group text-right">
+                                    <input type="submit" class="btn btn-info btn-block" value="POST COMMENT">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                   <div class="collapse mb-3" id="collapseReply{{comment.id}}">
+                       <div class="card card-body">
+                        <div class="reply">
+                            {% comment_replies comment as replies %}
+                            {% for reply in replies %}
+                            <div class="row">
+                                <div class="col-lg-2 col-md-2 col-sm-1 col-1">
+                                    <img src="https://picsum.photos/id/20/850" class="rounded-circle p-2 m-0 img-fluid">
+                                </div>
+                                <div class="col-lg-10 col-md-10 col-sm-11 col-11">
+                                    <span class="badge bg-dark text-white badge-sm p-2">{{reply.date}}</span>
+                                    <h6>{{reply.name}}</h6>
+                                    <p>{{reply.blog_comment}}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                       </div>
+                   </div>
+                </div>
+            </div>  
+        </div>
+        {% endfor %}
+        {% else %}
+        <h5 class="mb-5">No Comment Yet, Be the first one to comment !</h5>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
